@@ -1,0 +1,60 @@
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.inner {
+  height: 52px;
+  display: flex;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+.iconBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  cursor: pointer;
+
+  &:hover {
+    background: #f2f2f2;
+  }
+}
+
+.title {
+  width: 200px;
+  font-weight: 800;
+  text-align: center;
+  font-size: 15px;
+}
+
+.tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.tabBtn {
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  font-weight: 800;
+  cursor: pointer;
+
+  &:hover {
+    background: #f2f2f2;
+  }
+}
+
+.active {
+  border-color: #cfd8ff;
+  background: #eef3ff;
+}

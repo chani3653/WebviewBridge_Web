@@ -2,85 +2,96 @@ import {
   useBridgeLogs,
   clearBridgeLogs,
 } from "../../features/bridgeInspector/store/useBridgeLogStore";
+import styles from "./Console.module.scss";
+
+function isNativeLogType(type) {
+  return String(type).startsWith("native_");
+}
 
 export default function Console() {
   const logs = useBridgeLogs();
 
   return (
-    <div style={{ padding: 16 }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
+    <div className={styles.container}>
+      <div className={styles.header}>
         <h3 style={{ margin: "8px 0" }}>Console</h3>
-        <button style={smallBtn} onClick={clearBridgeLogs}>
+        <button className={styles.clearBtn} onClick={clearBridgeLogs}>
           Clear
         </button>
       </div>
 
-      <div style={{ fontSize: 12, color: "#555", marginBottom: 8 }}>
-        logs: {logs.length}
-      </div>
+      <div className={styles.meta}>logs: {logs.length}</div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {logs.map((l) => (
-          <div key={`${l.type}-${l.id}-${l.at}`} style={card}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <b>{l.type.toUpperCase()}</b>
-              <span style={{ color: "#666" }}>
-                {l.durationMs != null ? `${l.durationMs}ms` : ""}
-              </span>
-            </div>
-            <div style={{ marginTop: 4, fontSize: 12 }}>
-              <div>
-                <b>action:</b> {l.action}
-              </div>
-              <div>
-                <b>id:</b> {l.id}
-              </div>
-              {"ok" in l ? (
-                <div>
-                  <b>ok:</b> {String(l.ok)}
+      <div className={styles.list}>
+        {logs.map((l) => {
+          const native = isNativeLogType(l.type);
+          const okValue = typeof l.ok === "boolean" ? l.ok : null;
+
+          return (
+            <div
+              key={`${l.type}-${l.id || l.eventType}-${l.at}`}
+              className={styles.card}
+            >
+              <div className={styles.topRow}>
+                <div className={styles.badges}>
+                  <span
+                    className={`${styles.badge} ${native ? styles.badgeNative : styles.badgeWeb}`}
+                  >
+                    {native ? "NATIVE" : "WEB"}
+                  </span>
+
+                  <span className={styles.badge}>
+                    {String(l.type).toUpperCase()}
+                  </span>
+
+                  {okValue !== null ? (
+                    <span
+                      className={`${styles.badge} ${okValue ? styles.badgeOk : styles.badgeErr}`}
+                    >
+                      {okValue ? "OK" : "ERROR"}
+                    </span>
+                  ) : null}
                 </div>
-              ) : null}
+
+                <span style={{ color: "#666", fontSize: 12 }}>
+                  {l.durationMs != null ? `${l.durationMs}ms` : ""}
+                </span>
+              </div>
+
+              <div className={styles.kv}>
+                {l.action ? (
+                  <div>
+                    <b>action:</b> {l.action}
+                  </div>
+                ) : null}
+                {l.id ? (
+                  <div>
+                    <b>id:</b> {l.id}
+                  </div>
+                ) : null}
+                {l.eventType ? (
+                  <div>
+                    <b>event:</b> {l.eventType}
+                  </div>
+                ) : null}
+              </div>
+
+              <pre className={styles.pre}>
+                {JSON.stringify(
+                  {
+                    payload: l.payload,
+                    data: l.data,
+                    error: l.error,
+                    eventPayload: l.payload, // event에서도 payload를 사용
+                  },
+                  null,
+                  2,
+                )}
+              </pre>
             </div>
-            <pre style={pre}>
-              {JSON.stringify(
-                { payload: l.payload, data: l.data, error: l.error },
-                null,
-                2,
-              )}
-            </pre>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
 }
-
-const smallBtn = {
-  height: 32,
-  padding: "0 10px",
-  borderRadius: 8,
-  border: "1px solid #ddd",
-  background: "#fff",
-  fontWeight: 700,
-};
-
-const card = {
-  border: "1px solid #eee",
-  borderRadius: 12,
-  padding: 12,
-};
-
-const pre = {
-  margin: "8px 0 0",
-  padding: 10,
-  background: "#f7f7f7",
-  borderRadius: 10,
-  overflowX: "auto",
-  fontSize: 12,
-};
