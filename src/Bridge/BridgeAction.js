@@ -1,11 +1,26 @@
+import { logWebToNative, logNativeToWeb } from "./ConsoleAction";
+
 const uid = () => `req-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
 const pending = new Map(); // id -> { resolve, reject, timeoutId }
 
 export const SendToNative = (data) => {
+  try {
+    // always log outgoing attempt
+    logWebToNative(data);
+  } catch (e) {
+    // ignore logging errors
+  }
+
   const bridge = window.webkit?.messageHandlers?.bridge;
   if (!bridge) {
     console.warn("[Bridge] iOS bridge not available", data);
+    // also add a failure log as if native responded with an error
+    try {
+      logNativeToWeb({ id: data?.id, kind: "response", ok: false, error: "No native bridge found", original: data });
+    } catch (e) {
+      // ignore
+    }
     return false;
   }
   bridge.postMessage(data);
@@ -15,6 +30,11 @@ export const SendToNative = (data) => {
 // ✅ Native -> Web 응답 수신 함수(네이티브가 이걸 호출하게 만들 것)
 window.onNativeMessage = (msg) => {
   try {
+    try {
+      logNativeToWeb(msg);
+    } catch (e) {
+      // ignore logging errors
+    }
     const { id, kind, ok, result, error } = msg || {};
     if (!id) return;
 
