@@ -28,18 +28,6 @@ const Functions = () => {
   const items = useMemo(
     () => [
       {
-        key: "test",
-        title: "테스트",
-        message: () => ({
-          kind: "request",
-          id: "asd",
-          from: "Web",
-          to: "Native",
-          action: "native.haptic.vibrate",
-          payload: { style: "medium" },
-        }),
-      },
-      {
         key: "vibrate",
         title: "진동",
         message: () => ({

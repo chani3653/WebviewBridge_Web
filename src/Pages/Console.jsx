@@ -1,14 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
-// import { clearLogs, getLogsState, subscribeLogs } from "../bridge/logStore";
+import { clearLogs, getLogsState, subscribeLogs } from "../Bridge/ConsoleAction";
 
 const ConsolePage = ({ onClearVisible }) => {
-  // const [logs, setLogs] = useState(getLogsState().logs);
-  const [logs, setLogs] = useState("");
+  const [logs, setLogs] = useState(() => getLogsState().logs || []);
 
-  // useEffect(() => {
-  //   const unsub = subscribeLogs((s) => setLogs(s.logs));
-  //   return () => unsub();
-  // }, []);
+  useEffect(() => {
+    const unsub = subscribeLogs((s) => setLogs(s.logs));
+    return () => unsub();
+  }, []);
 
   const view = useMemo(() => logs, [logs]);
 
@@ -19,7 +18,6 @@ const ConsolePage = ({ onClearVisible }) => {
   };
 
   const directionToPillClass = (label) => {
-    // "Web -> Native" or "Native -> Web" or custom
     if (
       label?.toLowerCase().includes("web") &&
       label?.toLowerCase().includes("native")
@@ -41,16 +39,13 @@ const ConsolePage = ({ onClearVisible }) => {
         return "nativeToWeb";
     }
 
-    // fallback: "Web -> Native" / "Native -> Web"
     if (label === "Web -> Native") return "webToNative";
     if (label === "Native -> Web") return "nativeToWeb";
 
-    // 기본값: webToNative
     return "webToNative";
   };
 
   const directionLabelNormalize = (label) => {
-    // 스샷 표기: "Web to Native", "Native to Web"
     if (label === "Web -> Native") return "Web to Native";
     if (label === "Native -> Web") return "Native to Web";
     return label || "Native to Web";
@@ -71,8 +66,8 @@ const ConsolePage = ({ onClearVisible }) => {
           dirText === "Web to Native"
             ? "webToNative"
             : dirText === "Native to Web"
-              ? "nativeToWeb"
-              : directionToPillClass(dirText);
+            ? "nativeToWeb"
+            : directionToPillClass(dirText);
 
         return (
           <div key={l.id} className={`logCard ${cardClass}`}>
