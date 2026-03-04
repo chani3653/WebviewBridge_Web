@@ -6,7 +6,6 @@ const pending = new Map(); // id -> { resolve, reject, timeoutId }
 
 export const SendToNative = (data) => {
   try {
-    // always log outgoing attempt
     logWebToNative(data);
   } catch (e) {
     // ignore logging errors
@@ -17,7 +16,13 @@ export const SendToNative = (data) => {
     console.warn("[Bridge] iOS bridge not available", data);
     // also add a failure log as if native responded with an error
     try {
-      logNativeToWeb({ id: data?.id, kind: "response", ok: false, error: "No native bridge found", original: data });
+      logNativeToWeb({
+        id: data?.id,
+        kind: "response",
+        ok: false,
+        error: "No native bridge found",
+        original: data,
+      });
     } catch (e) {
       // ignore
     }
@@ -70,6 +75,17 @@ export const requestNative = ({ action, payload = {}, timeoutMs = 8000 }) => {
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       pending.delete(id);
+      try {
+        logNativeToWeb({
+          id,
+          kind: "response",
+          ok: false,
+          error: `Native timeout: ${action}`,
+          payload: { action, payload },
+        });
+      } catch (e) {
+        // ignore logging errors
+      }
       reject(new Error(`Native timeout: ${action}`));
     }, timeoutMs);
 
