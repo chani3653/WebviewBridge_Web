@@ -3,6 +3,7 @@ import Tabs from "./Components/Tabs";
 import Functions from "./Pages/Functions";
 import ConsolePage from "./Pages/Console";
 import StoragePage from "./Pages/Storage";
+import { clearLogs } from "./Bridge/ConsoleAction";
 // import { initBridgeReceiver } from "./bridge/bridge";
 // import { clearLogs } from "./bridge/logStore";
 
@@ -25,8 +26,7 @@ const App = () => {
           <div className="headerRow">
             <div className="title">WebView</div>
             {tab === "console" ? (
-              // <button className="clearLink" type="button" onClick={clearLogs}>
-              <button className="clearLink" type="button">
+              <button className="clearLink" type="button" onClick={clearLogs}>
                 clear
               </button>
             ) : (
