@@ -16,7 +16,13 @@ export const SendToNative = (data) => {
     console.warn("[Bridge] iOS bridge not available", data);
     // also add a failure log as if native responded with an error
     try {
-      logNativeToWeb({ id: data?.id, kind: "response", ok: false, error: "No native bridge found", original: data });
+      logNativeToWeb({
+        id: data?.id,
+        kind: "response",
+        ok: false,
+        error: "No native bridge found",
+        original: data,
+      });
     } catch (e) {
       // ignore
     }
@@ -70,7 +76,13 @@ export const requestNative = ({ action, payload = {}, timeoutMs = 8000 }) => {
     const timeoutId = setTimeout(() => {
       pending.delete(id);
       try {
-        logNativeToWeb({ id, kind: "response", ok: false, error: `Native timeout: ${action}`, payload: { action, payload } });
+        logNativeToWeb({
+          id,
+          kind: "response",
+          ok: false,
+          error: `Native timeout: ${action}`,
+          payload: { action, payload },
+        });
       } catch (e) {
         // ignore logging errors
       }
