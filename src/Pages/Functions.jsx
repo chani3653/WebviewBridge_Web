@@ -5,8 +5,6 @@ const uid = () => `req-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
 const Functions = () => {
   const [pressed, setPressed] = useState(null);
-  const [keyValue, setKeyValue] = useState("");
-  const [valueValue, setValueValue] = useState("");
 
   const pulse = (key) => {
     setPressed(key);
@@ -120,37 +118,6 @@ const Functions = () => {
           {it.title}
         </button>
       ))}
-      {/* <div className="nativeStorageCard">
-        <div className="storageTitle">네이티브 스토리지</div>
-
-        <div className="storageField">
-          <div className="storageLabel">Key</div>
-          <input
-            className="storageInput"
-            value={keyValue}
-            onChange={(e) => setKeyValue(e.target.value)}
-            placeholder="키 값을 입력하세요"
-          />
-        </div>
-
-        <div className="storageField">
-          <div className="storageLabel">Value</div>
-          <input
-            className="storageInput"
-            value={valueValue}
-            onChange={(e) => setValueValue(e.target.value)}
-            placeholder="벨류 값을 입력하세요"
-          />
-        </div>
-
-        <button
-          className={`storageSaveBtn ${pressed ? "pressed" : ""}`}
-          onClick={handleSave}
-          type="button"
-        >
-          저장
-        </button>
-      </div> */}
     </div>
   );
 };

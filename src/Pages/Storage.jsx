@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 const StoragePage = () => {
   const [items, setItems] = useState([]);
@@ -16,23 +16,12 @@ const StoragePage = () => {
 
   useEffect(() => {
     refresh();
-  }, []);
 
-  const rows = useMemo(() => {
-    // 스샷처럼 1줄 JSON으로 표현
-    return items.map((it) => {
-      // value가 JSON string이면 그대로 쓰고, 아니면 string으로 넣어줌
-      let v = it.value;
-      try {
-        // JSON 가능하면 파싱 후 다시 stringify(정렬된 느낌)
-        const parsed = JSON.parse(it.value);
-        v = parsed;
-      } catch {
-        v = it.value;
-      }
-      return { [it.key]: v };
-    });
-  }, [items]);
+    window.addEventListener("webviewbridge.storage.updated", refresh);
+    return () => {
+      window.removeEventListener("webviewbridge.storage.updated", refresh);
+    };
+  }, []);
 
   return (
     <div className="dataList">
